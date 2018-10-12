@@ -7,6 +7,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Button,
+  AsyncStorage
 } from 'react-native';
 
 export default class HistoriqueScreen extends React.Component {
@@ -17,47 +19,30 @@ export default class HistoriqueScreen extends React.Component {
     }
   };
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        </ScrollView>
-      </View>
-    );
-  }
-
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
+  constructor(props){
+    super(props);
+    this.state = {
+      text: " ",
     }
   }
 
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-  };
+  loadMessages() {
+    AsyncStorage.getItem('history').then((value) => this.setState({'text': value}))
+  }
 
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>{this.state.text}</Text>
+        <Button
+        onPress={() => this.loadMessages()}
+        title="Mettre à jour"
+        color="#841584"
+        accessibilityLabel="Learn more about this purple button"
+      />
+      </View>
     );
-  };
+  }
 }
 
 const styles = StyleSheet.create({
