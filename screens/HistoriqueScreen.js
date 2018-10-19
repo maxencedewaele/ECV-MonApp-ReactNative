@@ -25,6 +25,7 @@ export default class HistoriqueScreen extends React.Component {
     super(props);
     this.state = {
       history : [],
+      date: null,
       text: null,
       latitude: null,
       longitude: null,
@@ -33,26 +34,21 @@ export default class HistoriqueScreen extends React.Component {
 
   loadMessages() {
     // If value was submitted & not yet stored
-    AsyncStorage.multiGet(["text", "latitude", "longitude"]).then(response => {
+    AsyncStorage.multiGet(["date", "text", "latitude", "longitude"]).then(response => {
       if (response[0][1]) {
         this.setState({
-          'text' : response[0][1],
-          'latitude' : response[1][1],
-          'longitude' : response[2][1]
-        })
-        this.setState({ 
-          history: [...this.state.history, {text: this.state.text, latitude: this.state.latitude, longitude: this.state.longitude}] 
+          'date' : response[0][1],
+          'text' : response[1][1],
+          'latitude' : response[2][1],
+          'longitude' : response[3][1]
         })
 
-        // Reset states 
-        this.setState({
-          text: "",
-          latitude: "",
-          longitude: "",
-        });
+        this.setState({ 
+          history: [...this.state.history, {date: this.state.date, text: this.state.text, latitude: this.state.latitude, longitude: this.state.longitude}] 
+        })
 
         // Reset AsynStorage values
-        AsyncStorage.multiRemove(['text', 'latitude', 'longitude']);
+        AsyncStorage.multiRemove(['date', 'text', 'latitude', 'longitude']);
       }    
     })
   }
@@ -72,6 +68,7 @@ export default class HistoriqueScreen extends React.Component {
           renderItem={({ item }) => (
             <TouchableHighlight>
               <View>
+                <Text>Date : {item.date}</Text>
                 <Text>Texte : {item.text}</Text>
                 <Text>Latitude : {item.latitude}</Text>
                 <Text>Longitude : {item.longitude}</Text>

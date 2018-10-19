@@ -16,6 +16,7 @@ export default class NewScreen extends React.Component {
   }
 
   onSomeInputChange = () => {
+    AsyncStorage.setItem('date', new Date());
     AsyncStorage.setItem('text', this.state.text);
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -25,6 +26,8 @@ export default class NewScreen extends React.Component {
       (error) => this.setState({ error: error.message }),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     )
+
+    alert('Votre message a bien été envoyé.')
   }
 
   render() {
