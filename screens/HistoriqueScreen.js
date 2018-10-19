@@ -6,7 +6,9 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableHighlight,
   View,
+  FlatList,
   Button,
   AsyncStorage
 } from 'react-native';
@@ -22,24 +24,61 @@ export default class HistoriqueScreen extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      text: " ",
+      history : [],
+      text: null,
+      latitude: null,
+      longitude: null,
     }
   }
 
   loadMessages() {
-    AsyncStorage.getItem('history').then((value) => this.setState({'text': value}))
+    // If value was submitted & not yet stored
+    AsyncStorage.multiGet(["text", "latitude", "longitude"]).then(response => {
+      if (response[0][1]) {
+        this.setState({
+          'text' : response[0][1],
+          'latitude' : response[1][1],
+          'longitude' : response[2][1]
+        })
+        this.setState({ 
+          history: [...this.state.history, {text: this.state.text, latitude: this.state.latitude, longitude: this.state.longitude}] 
+        })
+
+        // Reset states 
+        this.setState({
+          text: "",
+          latitude: "",
+          longitude: "",
+        });
+
+        // Reset AsynStorage values
+        AsyncStorage.multiRemove(['text', 'latitude', 'longitude']);
+      }    
+    })
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Text>{this.state.text}</Text>
         <Button
         onPress={() => this.loadMessages()}
         title="Mettre à jour"
         color="#841584"
         accessibilityLabel="Learn more about this purple button"
       />
+
+      <FlatList
+          data={this.state.history}
+          renderItem={({ item }) => (
+            <TouchableHighlight>
+              <View>
+                <Text>Texte : {item.text}</Text>
+                <Text>Latitude : {item.latitude}</Text>
+                <Text>Longitude : {item.longitude}</Text>
+              </View>
+            </TouchableHighlight>
+          )}
+        />
       </View>
     );
   }

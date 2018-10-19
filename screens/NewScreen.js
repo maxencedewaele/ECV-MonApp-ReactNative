@@ -16,7 +16,15 @@ export default class NewScreen extends React.Component {
   }
 
   onSomeInputChange = () => {
-    AsyncStorage.setItem('history', this.state.text)
+    AsyncStorage.setItem('text', this.state.text);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        AsyncStorage.setItem('latitude', position.coords.latitude.toString());
+        AsyncStorage.setItem('longitude', position.coords.longitude.toString());
+      },
+      (error) => this.setState({ error: error.message }),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+    )
   }
 
   render() {
@@ -26,7 +34,8 @@ export default class NewScreen extends React.Component {
         <TextInput
         onChangeText={(text) => this.setState({text})}
         value={this.state.text}
-        style={{height: 40, flex: 1, borderColor: 'gray', borderWidth: 1}}
+        multiline
+        style={{height: 200, flex: 1, borderColor: 'gray', borderWidth: 1}}
       />
       <Button
         onPress={() => this.onSomeInputChange()}
