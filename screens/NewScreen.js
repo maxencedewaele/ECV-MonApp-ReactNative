@@ -1,11 +1,11 @@
 import React from 'react';
-import { ScrollView, StyleSheet, TextInput, Button, Alert, FlatList, TouchableHighlight, Text, AsyncStorage } from 'react-native';
+import { ScrollView, StyleSheet, TextInput, Button, View, AsyncStorage } from 'react-native';
 
 export default class NewScreen extends React.Component {
   static navigationOptions = {
     title: 'New',
     headerStyle: {
-      backgroundColor: '#ffff8b',
+      backgroundColor: '#ffee58',
     }
   };
   constructor(props){
@@ -20,8 +20,10 @@ export default class NewScreen extends React.Component {
     AsyncStorage.setItem('text', this.state.text);
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        AsyncStorage.setItem('latitude', position.coords.latitude.toString());
-        AsyncStorage.setItem('longitude', position.coords.longitude.toString());
+        AsyncStorage.multiSet([
+          ['latitude', position.coords.latitude.toString()], 
+          ['longitude', position.coords.longitude.toString()]
+        ]);
       },
       (error) => this.setState({ error: error.message }),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
@@ -31,32 +33,21 @@ export default class NewScreen extends React.Component {
   }
 
   render() {
-  
     return (
-      <ScrollView style={styles.container}>
-        <TextInput
-        onChangeText={(text) => this.setState({text})}
-        value={this.state.text}
-        multiline
-        style={{height: 200, flex: 1, borderColor: 'gray', borderWidth: 1}}
-      />
-      <Button
-        onPress={() => this.onSomeInputChange()}
-        title="Submit"
-        color="#841584"
-        accessibilityLabel="Learn more about this purple button"
-      />
-      <FlatList
-          data={AsyncStorage.getItem('history')}
-          renderItem={({ item }) => (
-            <TouchableHighlight
-              // onPress = { () => this._onPressItem(item) }
-              >
-              {/* <Profile content={item}/> */}
-              <View>test</View>
-            </TouchableHighlight>
-          )}
+      <ScrollView contentContainerStyle={styles.container}>
+        <TextInput style={styles.textInput}
+          onChangeText={(text) => this.setState({text})}
+          value={this.state.text}
+          multiline
         />
+        <View style={styles.buttonStyle}>
+          <Button
+            onPress={() => this.onSomeInputChange()}
+            title="Envoyer"
+            color="black"
+            accessibilityLabel="Learn more about this purple button"
+          />
+        </View>
       </ScrollView>
     );
   }
@@ -65,7 +56,28 @@ export default class NewScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
     paddingTop: 15,
     backgroundColor: 'white',
   },
+  textInput: {
+    flex: 1,
+    width: 300,
+    marginBottom: 30,
+    height: 200, 
+    borderColor: 'gray', 
+    borderWidth: 1
+  },
+  buttonStyle: {
+    color: 'white',
+    backgroundColor: "#ffee58",
+    width: 300,
+    height: 45,
+    borderColor: "transparent",
+    borderWidth: 0,
+    borderRadius: 5,
+    marginBottom: 30,
+  }
 });
