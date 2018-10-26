@@ -1,17 +1,17 @@
 import React from 'react';
 import {
   Image,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   TouchableHighlight,
   View,
   FlatList,
   Button,
   AsyncStorage
 } from 'react-native';
+import moment from 'moment' 
+
 
 export default class HistoriqueScreen extends React.Component {
   static navigationOptions = {
@@ -46,7 +46,7 @@ export default class HistoriqueScreen extends React.Component {
 
         // Add newly added message element to array of messages
         this.setState({ 
-          history: [...this.state.history, {date: this.state.date, text: this.state.text, latitude: this.state.latitude, longitude: this.state.longitude}] 
+          history: [...this.state.history, {date: moment(this.state.date).format('dddd, MMMM Do YYYY, H:mm'), text: this.state.text, latitude: this.state.latitude, longitude: this.state.longitude}] 
         })
 
         // Reset AsynStorage values
@@ -57,7 +57,7 @@ export default class HistoriqueScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.buttonStyle}>
           <Button
             onPress={() => this.loadMessages()}
@@ -80,7 +80,7 @@ export default class HistoriqueScreen extends React.Component {
               </TouchableHighlight>
             )}
         />
-      </View>
+      </ScrollView>
     );
   }
 }
